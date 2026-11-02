@@ -91,8 +91,11 @@ This adds sample users and events to the database.
 ### Demo Login Credentials
 
 | Role | Email | Password |
+
 | Student | student@example.com | Demo@123 |
+
 | Organizer | organizer@example.com | Demo@123 |
+
 | Administrator | admin@example.com | Demo@123 |
 
 ## 8. Run the Application
