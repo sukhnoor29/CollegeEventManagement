@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Feedback{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">YOUR EXPERIENCE</p><h1>Event feedback</h1><p class="muted">Share your thoughts about {{ event.event_name }}.</p></div></div>
+<section class="form-card narrow-form"><form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>How would you rate this event?</label>
+  <div class="rating-options">{% for number in range(1, 6) %}<label><input type="radio" name="rating" value="{{ number }}" {% if number == 5 %}checked{% endif %}><span>{{ number }}</span></label>{% endfor %}</div>
+  <label>Comments<textarea name="comments" rows="5" maxlength="3000" placeholder="What did you enjoy? What could be improved?"></textarea></label>
+  <button class="button" type="submit">Submit feedback</button>
+</form></section>
+{% endblock %}

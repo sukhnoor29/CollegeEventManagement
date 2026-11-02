@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}My registrations{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">YOUR EVENT PASSES</p><h1>My registrations</h1><p class="muted">Keep your QR codes ready for event check-in.</p></div><a class="button button-ghost" href="{{ url_for('main.index') }}">Explore events</a></div>
+{% if registrations %}<div class="registration-list">
+  {% for registration in registrations %}<article class="registration-card">
+    <div class="registration-info"><span class="category-pill">{{ registration.event.category }}</span><h3>{{ registration.event.event_name }}</h3><p class="muted">{{ registration.event.starts_at.strftime('%d %b %Y, %I:%M %p') }} · {{ registration.event.venue }}</p><p><span class="status status-{{ registration.status }}">{{ registration.status|title }}</span>{% if registration.attendance %}<span class="status status-attended">Checked in</span>{% endif %}</p><a class="text-link" href="{{ url_for('main.event_detail', event_id=registration.event.id) }}">Event details →</a>
+      {% if registration.event.starts_at <= now_local and not registration.event.feedback_entries|selectattr('student_id', 'equalto', current_user.id)|list %}<a class="text-link" href="{{ url_for('main.submit_feedback', event_id=registration.event.id) }}">Give feedback →</a>{% endif %}
+    </div>
+    {% if registration.status == 'registered' %}<div class="qr-pass"><img src="{{ qr_data_uri(registration.qr_token) }}" alt="QR check-in code for {{ registration.event.event_name }}"><small>Show this code at check-in</small></div>{% endif %}
+  </article>{% endfor %}
+</div>{% else %}<div class="empty-state"><h3>No registrations yet</h3><p>Explore upcoming events and reserve your place.</p><a class="button" href="{{ url_for('main.index') }}">Browse events</a></div>{% endif %}
+{% endblock %}

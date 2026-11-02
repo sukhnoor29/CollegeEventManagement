@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}Event feedback{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">FEEDBACK & REPORTS</p><h1>{{ event.event_name }}</h1><p class="muted">Participant feedback summary.</p></div><a class="button button-ghost" href="{{ url_for('events.event_list') }}">Back to events</a></div>
+<div class="stat-grid"><div class="stat-card"><span>RESPONSES</span><strong>{{ feedback|length }}</strong></div><div class="stat-card"><span>AVERAGE RATING</span><strong>{{ average if average is not none else '—' }} <small>/ 5</small></strong></div></div>
+<div class="feedback-list">{% for item in feedback %}<article class="feedback-card"><div><strong>{{ item.student.full_name }}</strong><span class="rating-display">{{ '★' * item.rating }}{{ '☆' * (5-item.rating) }}</span></div><p>{{ item.comments or 'No written comment provided.' }}</p><small class="muted">{{ item.submitted_at.strftime('%d %b %Y, %I:%M %p') }}</small></article>{% else %}<div class="empty-state"><h3>No feedback submitted yet</h3><p>Feedback will appear here after students submit their event reviews.</p></div>{% endfor %}</div>
+{% endblock %}

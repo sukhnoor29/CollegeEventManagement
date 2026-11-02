@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}All events{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">ADMINISTRATION</p><h1>Event oversight</h1><p class="muted">Review events across organizers and control public visibility.</p></div><a class="button" href="{{ url_for('events.create_event') }}">＋ Create event</a></div>
+<div class="table-wrap"><table><thead><tr><th>Event</th><th>Organizer</th><th>Date</th><th>Registrations</th><th>Visibility</th><th></th></tr></thead><tbody>{% for event in events %}<tr><td><strong>{{ event.event_name }}</strong><small>{{ event.category }}</small></td><td>{{ event.organizer.full_name }}</td><td>{{ event.starts_at.strftime('%d %b %Y') }}</td><td>{{ event.registered_count }} / {{ event.registration_limit }}</td><td>{{ 'Published' if event.is_published else 'Hidden' }}</td><td><form method="post" action="{{ url_for('admin.toggle_event', event_id=event.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="text-link" type="submit">{{ 'Unpublish' if event.is_published else 'Publish' }}</button></form></td></tr>{% else %}<tr><td colspan="6" class="table-empty">No events found.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

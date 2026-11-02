@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}Participants{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">PARTICIPANT MANAGEMENT</p><h1>{{ event.event_name }}</h1><p class="muted">Registered participants and their attendance status.</p></div><a class="button button-ghost" href="{{ url_for('events.event_list') }}">Back to events</a></div>
+<div class="stat-grid"><div class="stat-card"><span>REGISTERED</span><strong>{{ registrations|length }}</strong></div><div class="stat-card"><span>CAPACITY</span><strong>{{ event.registration_limit }}</strong></div><div class="stat-card"><span>CHECKED IN</span><strong>{{ registrations|selectattr('attendance')|list|length }}</strong></div></div>
+<div class="table-wrap"><table><thead><tr><th>Student</th><th>Email</th><th>Registered on</th><th>Attendance</th></tr></thead><tbody>{% for item in registrations %}<tr><td><strong>{{ item.student.full_name }}</strong></td><td>{{ item.student.email }}</td><td>{{ item.registered_at.strftime('%d %b %Y, %I:%M %p') }}</td><td>{% if item.attendance %}<span class="status status-attended">Checked in</span>{% else %}<span class="status">Not checked in</span>{% endif %}</td></tr>{% else %}<tr><td colspan="4" class="table-empty">No registrations for this event yet.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

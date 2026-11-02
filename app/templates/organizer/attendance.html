@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}QR attendance{% endblock %}
+{% block head %}<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">QR CHECK-IN</p><h1>{{ event.event_name }}</h1><p class="muted">Scan a student's registration QR code or enter its token manually.</p></div><a class="button button-ghost" href="{{ url_for('events.participants', event_id=event.id) }}">Participants</a></div>
+<div class="attendance-layout">
+  <section class="form-card scanner-card"><h2>Scan QR code</h2><div id="qr-reader"></div><button class="button button-ghost" type="button" id="start-scanner">Start camera scanner</button><p class="muted small">Camera access requires HTTPS or localhost. Manual token entry remains available.</p>
+    <hr>
+    <h3>Manual check-in</h3><form method="post" id="scan-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><label>QR token<input id="qr-token" name="qr_token" autocomplete="off" placeholder="Paste or scan the QR token" required></label><button class="button" type="submit">Verify and mark attendance</button></form>
+  </section>
+  <section class="form-card"><div class="section-heading inline-heading"><div><h2>Check-in summary</h2><p class="muted">Attendance recorded for this event.</p></div><strong class="large-number">{{ attended_count }} / {{ registrations|length }}</strong></div>
+    <div class="progress-track"><span style="width: {{ (attended_count / registrations|length * 100) if registrations else 0 }}%"></span></div>
+    <div class="checkin-list">{% for item in registrations %}<div class="checkin-row"><span>{{ item.student.full_name }}</span>{% if item.attendance %}<span class="status status-attended">Checked in</span>{% else %}<span class="status">Pending</span>{% endif %}</div>{% else %}<p class="muted">No registered participants yet.</p>{% endfor %}</div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script>
+(() => {
+  const startButton = document.getElementById('start-scanner');
+  const tokenInput = document.getElementById('qr-token');
+  const form = document.getElementById('scan-form');
+  if (!startButton || !window.Html5Qrcode) return;
+  let scanner;
+  startButton.addEventListener('click', async () => {
+    try {
+      scanner = scanner || new Html5Qrcode('qr-reader');
+      await scanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 220, height: 220 } }, async (decodedText) => {
+        tokenInput.value = decodedText.trim();
+        await scanner.stop();
+        form.requestSubmit();
+      });
+      startButton.disabled = true;
+      startButton.textContent = 'Scanner active';
+    } catch (error) {
+      alert('Could not start the camera. Check browser permissions or use manual entry.');
+    }
+  });
+})();
+</script>{% endblock %}

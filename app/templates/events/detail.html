@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}{{ event.event_name }}{% endblock %}
+{% block content %}
+<div class="breadcrumbs"><a href="{{ url_for('main.index') }}">Events</a> / {{ event.event_name }}</div>
+<div class="detail-layout">
+  <article class="detail-main">
+    <span class="category-pill">{{ event.category }}</span>
+    <h1>{{ event.event_name }}</h1>
+    <p class="detail-description">{{ event.description }}</p>
+    <div class="detail-facts"><div><span class="fact-label">DATE & TIME</span><strong>{{ event.starts_at.strftime('%A, %d %B %Y') }}</strong><span>{{ event.starts_at.strftime('%I:%M %p') }}</span></div><div><span class="fact-label">VENUE</span><strong>{{ event.venue }}</strong></div><div><span class="fact-label">ORGANIZER</span><strong>{{ event.organizer.full_name }}</strong></div></div>
+    {% if current_user.is_authenticated and current_user.role == 'student' %}
+      {% if registration and registration.status == 'registered' %}<div class="notice notice-success">You are registered for this event. Your QR pass is available in <a href="{{ url_for('main.my_registrations') }}">My registrations</a>.</div>
+      {% elif event.is_registration_open %}<form method="post" action="{{ url_for('main.register_for_event', event_id=event.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="button" type="submit">Register for this event</button></form>
+      {% else %}<div class="notice">Registration is closed or the event is full.</div>{% endif %}
+      {% if event.starts_at <= now_local and registration and not feedback_exists %}<a class="button button-ghost" href="{{ url_for('main.submit_feedback', event_id=event.id) }}">Leave feedback</a>{% endif %}
+      {% if feedback_exists %}<p class="muted">You have submitted feedback for this event.</p>{% endif %}
+    {% elif not current_user.is_authenticated %}<a class="button" href="{{ url_for('auth.login') }}">Log in to register</a>{% endif %}
+  </article>
+  <aside class="detail-side"><div class="side-stat"><span class="fact-label">AVAILABLE PLACES</span><strong>{{ event.seats_remaining }}</strong><span>of {{ event.registration_limit }} places</span></div><div class="side-stat"><span class="fact-label">REGISTRATION DEADLINE</span><strong>{{ event.registration_deadline.strftime('%d %b %Y, %I:%M %p') if event.registration_deadline else 'Until event starts' }}</strong></div><div class="side-note">Please keep your QR pass available when you arrive. The organizer will verify it at check-in.</div></aside>
+</div>
+{% endblock %}

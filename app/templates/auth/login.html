@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+<div class="auth-layout"><section class="auth-aside"><p class="eyebrow">WELCOME BACK</p><h1>Your campus<br>journey continues.</h1><p>Sign in to manage registrations, discover recommended events, or organize your next campus experience.</p></section>
+<section class="form-card auth-card"><p class="eyebrow">ACCOUNT ACCESS</p><h2>Log in</h2><form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>Email address<input type="email" name="email" autocomplete="email" required></label>
+  <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
+  <button class="button button-full" type="submit">Log in</button>
+</form><p class="form-note">New here? <a href="{{ url_for('auth.register') }}">Create a student account</a>.</p></section></div>
+{% endblock %}
